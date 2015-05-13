@@ -1198,6 +1198,16 @@ namespace CreatureModule {
                 *set_data = ((1.0f - blending_factor) * (*read_data_1)) +
                 (blending_factor * (*read_data_2));
             }
+            
+            // turn off blending
+            if (blending_factor >= 1.0f) {
+                do_blending = false;
+                float runtime = getRunTime();
+                this->SetActiveAnimationName(this->active_blend_animation_names[1]);
+                
+                // seems hacky
+                this->setRunTime(runtime);
+            }
         }
         else {
             auto& cur_animation = animations[active_animation_name];
