@@ -271,7 +271,10 @@ namespace CreatureModule {
         
         // Creates point cache for animation
         void MakePointCache(const std::string& animation_name_in);
-        
+        void SetBlendingFactorRange(float start, float end);
+        void SetBlendingFactorTime(float value_in);
+        void SetUseBlendingFactorTiming(bool value);
+
     protected:
         
         std::string ProcessContactBone(const glm::vec2& pt_in,
@@ -291,6 +294,12 @@ namespace CreatureModule {
         glm::float32 * blend_render_pts[2];
         bool do_blending;
         float blending_factor;
+        float blending_factor_target;
+        float blending_factor_source;
+        float blending_factor_transition_time;
+        bool use_blending_over_time;
+        float blending_accumelated_time;
+        float blending_factor_time;
         std::string active_blend_animation_names[2];
         bool mirror_y;
         bool use_custom_time_range;

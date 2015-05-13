@@ -1053,7 +1053,29 @@ namespace CreatureModule {
     {
         blending_factor = value_in;
     }
+
+    void
+    CreatureManager::SetBlendingFactorRange(float start, float end)
+    {
+        blending_factor_source = start;
+        blending_factor_target = end;
+    }
+
+    void
+    CreatureManager::SetUseBlendingFactorTiming(bool value)
+    {
+        use_blending_over_time = value;
+        if (use_blending_over_time) {
+            blending_accumelated_time = 0;
+        }
+    }
     
+    void
+    CreatureManager::SetBlendingFactorTime(float value_in)
+    {
+        blending_factor_time = value_in * this->time_scale;;
+    }
+
     void
     CreatureManager::MakePointCache(const std::string& animation_name_in)
     {
@@ -1145,6 +1167,17 @@ namespace CreatureModule {
         
         if(do_blending)
         {
+            if (use_blending_over_time) {
+                blending_accumelated_time += delta * time_scale;
+                float scale = blending_accumelated_time / blending_factor_time;
+                blending_factor = (blending_factor_target - blending_factor_source) * scale + blending_factor_source;
+                blending_factor = fmin(blending_factor, 1.0f);
+                
+                if (blending_accumelated_time >= blending_factor_time) {
+                    use_blending_over_time = false;
+                }
+            }
+            
             for(int i = 0; i < 2; i++) {
                 auto& cur_animation = animations[active_blend_animation_names[i]];
                 if(cur_animation->hasCachePts())
