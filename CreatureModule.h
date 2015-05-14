@@ -49,7 +49,7 @@
 #include <memory>
 
 namespace CreatureModule {
-    
+    class CreatureAnimation;
     class CreatureLoadDataPacket {
     public:
         CreatureLoadDataPacket()
@@ -125,6 +125,10 @@ namespace CreatureModule {
 
         // Get Available Animation names. Note that these animations might not have been loaded yet.
         const std::vector<std::string>& GetAnimationNames() const;
+        
+        
+        static std::map<std::string, std::shared_ptr<CreatureModule::CreatureAnimation>> loadAllAnimations(CreatureLoadDataPacket& load_data);
+
     
     protected:
         

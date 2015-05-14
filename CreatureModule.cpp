@@ -620,6 +620,7 @@ namespace CreatureModule {
         load_data.src_chars = extract_obj;
         LoadCreatureJSONDataFromString(load_data.src_chars, load_data);
     }
+    
 
     // Creature class
     Creature::Creature(CreatureLoadDataPacket& load_data)
@@ -704,6 +705,20 @@ namespace CreatureModule {
         return animation_names;
     }
     
+    std::map<std::string, std::shared_ptr<CreatureModule::CreatureAnimation>> Creature::loadAllAnimations(CreatureLoadDataPacket& load_data) {
+        JsonNode * json_root = load_data.base_node.toNode();
+        JsonNode * json_anim_base = GetJSONLevelNodeFromKey(*json_root, "animation");
+        
+        std::map<std::string, std::shared_ptr<CreatureModule::CreatureAnimation>> result;
+        for (auto animItr = JsonBegin(json_anim_base->value); animItr != JsonEnd(json_anim_base->value); ++animItr) {
+            std::string name(animItr->key);
+            auto anim = std::shared_ptr<CreatureModule::CreatureAnimation>(new CreatureModule::CreatureAnimation(load_data, name));
+            result.insert(std::make_pair(name, anim));
+        }
+        
+        return result;
+    }
+
     void
     Creature::LoadFromData(CreatureLoadDataPacket& load_data)
     {
