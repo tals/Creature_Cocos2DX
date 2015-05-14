@@ -554,27 +554,31 @@ namespace CreatureModule {
     void LoadCreatureJSONData(const std::string& filename_in,
                               CreatureLoadDataPacket& load_data)
     {
-        std::ifstream read_file;
-        read_file.open(filename_in.c_str());
-        std::stringstream str_stream;
-        str_stream << read_file.rdbuf();
-        read_file.close();
         
-        LoadCreatureJSONDataFromString(str_stream.str(), load_data);
+        FILE* f = fopen(filename_in.c_str(), "r");
+        if (f == nullptr) {
+            throw std::invalid_argument("filename doesn't exist");
+        }
+        fseek(f, 0, SEEK_END);
+        size_t size = ftell(f);
+        fseek(f, 0, SEEK_SET);
+        char* buffer = (char*)malloc(size + 1);
+        fread(buffer, size, 1, f);
+        buffer[size] = '\0';
+        load_data.src_chars = buffer;
+
+        fclose(f);
+        
+        LoadCreatureJSONDataFromString(buffer, load_data);
     }
     
-    void LoadCreatureJSONDataFromString(const std::string& string_in,
+    void LoadCreatureJSONDataFromString(char *data,
                                         CreatureLoadDataPacket& load_data)
     {
         char *endptr;
-        size_t source_size = string_in.size();
-        char *source_chars = new char[source_size+1];
-        source_chars[source_size]=0;
-        memcpy(source_chars,string_in.c_str(),source_size);
         
-        JsonParseStatus status = jsonParse(source_chars, &endptr, &load_data.base_node, load_data.allocator);
+        JsonParseStatus status = jsonParse(data, &endptr, &load_data.base_node, load_data.allocator);
         
-        load_data.src_chars = source_chars;
         
         if(status != JSON_PARSE_OK) {
             std::cerr<<"LoadCreatureJSONData() - Error parsing JSON!"<<std::endl;
@@ -605,7 +609,7 @@ namespace CreatureModule {
             return;
         }
         
-        void * extract_obj = mz_zip_reader_extract_file_to_heap(&zip_archive, file_stat.m_filename, &uncomp_size, 0);
+        char * extract_obj = (char*)mz_zip_reader_extract_file_to_heap(&zip_archive, file_stat.m_filename, &uncomp_size, 0);
         if(!extract_obj)
         {
             printf("mz_zip_reader_extract_file_to_heap() failed!\n");
@@ -613,8 +617,8 @@ namespace CreatureModule {
             return;
         }
         
-        std::string real_string((char *)extract_obj);
-        LoadCreatureJSONDataFromString(real_string, load_data);
+        load_data.src_chars = extract_obj;
+        LoadCreatureJSONDataFromString(load_data.src_chars, load_data);
     }
 
     // Creature class

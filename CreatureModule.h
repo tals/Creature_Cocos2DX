@@ -61,7 +61,7 @@ namespace CreatureModule {
         {
             if(src_chars)
             {
-                delete [] src_chars;
+                free(src_chars);
             }
         }
         
@@ -82,8 +82,9 @@ namespace CreatureModule {
     
     // Parses and creates a json from an input string and returns the entire json structure for a creature
     // Use this to load your creatures and animatons
-    void LoadCreatureJSONDataFromString(const std::string& string_in,
+    void LoadCreatureJSONDataFromString(char *data,
                                         CreatureLoadDataPacket& load_data);
+
     
     // Class for the creature character
     class Creature {
