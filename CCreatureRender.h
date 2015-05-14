@@ -18,6 +18,8 @@
 }
 
 -(id)initWithData:(CreatureModule::CreatureManager *) managerIn andTexture:(CCTexture *) textureIn;
+@property (nonatomic, setter=setAnimation:, getter=getAnimation) NSString* animation;
+@property (nonatomic, setter=setIsPlaying:, getter=getIsPlaying) BOOL isPlaying;
 
 @property (nonatomic) CreatureModule::CreatureManager * manager;
 

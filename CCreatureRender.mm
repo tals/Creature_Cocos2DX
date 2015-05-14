@@ -94,4 +94,24 @@
     }
 }
 
+- (void)setAnimation:(NSString *)animation
+{
+    self.manager->SetActiveAnimationName([animation UTF8String]);
+}
+
+- (NSString*)getAnimation
+{
+    return [NSString stringWithUTF8String:self.manager->GetActiveAnimationName().c_str()];
+}
+
+- (bool)getIsPlaying
+{
+    return self->manager->GetIsPlaying();
+}
+
+- (void)setIsPlaying:(BOOL)flag
+{
+    self->manager->SetIsPlaying(flag);
+}
+
 @end
